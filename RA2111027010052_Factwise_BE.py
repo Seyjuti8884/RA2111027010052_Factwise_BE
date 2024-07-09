@@ -5,63 +5,110 @@
 
 
 #Question 1:
-ones = ["one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"]
-tens = ["twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"]
+def to_english(number):
+    _ones = {
+            1: 'one',
+            2: 'two',
+            3: 'three',
+            4: 'four',
+            5: 'five',
+            6: 'six',
+            7: 'seven',
+            8: 'eight',
+            9: 'nine',
+            10: 'ten',
+            11: 'eleven',
+            12: 'twelve',
+            13: 'thirteen',
+            14: 'fourteen',
+            15: 'fifteen',
+            16: 'sixteen',
+            17: 'seventeen',
+            18: 'eighteen',
+            19: 'nineteen',
+            }
 
-def number_to_words(n):
-    if n == 1000:
-        return "onethousand"
-    words = ""
-    if n>=100:
-        words+= ones[n // 100] + "hundred"
-        n %= 100
-        if n > 0:
-            words += "and"
-        
-    if n>=20:
-        words+= tens[n//10] 
-        n %= 10
-    words += ones[n]
-    return words
-total_letters = 0
-for i in range(1,1001):
-    word = number_to_words(i)
-    total_letters+=len(word)
+    _tens = {
+            2: 'twenty',
+            3: 'thirty',
+            4: 'forty',
+            5: 'fifty',
+            6: 'sixty',
+            7: 'seventy',
+            8: 'eighty',
+            9: 'ninety'
+            }
+    if abs(number) >= 10000:
+        return str(number)
+    elif number == 0:
+        return 'zero'
+    else:
+        output = ''
 
-print("Total letters used from 1 to 1000:",total_letters)
+        if number < 0:
+            output += 'negative '
+            number = abs(number)
 
+        if number >= 1000:
+            output += _ones[number // 1000]
+            if number % 1000 == 0:
+                output += " thousand"
+            else:
+                output += " thousand "
+            number %= 1000
 
+        if number >= 100:
+            output += _ones[number // 100]
+            if number % 100 == 0:
+                output += " hundred"
+            else:
+                output += " hundred and "
+            number %= 100
+
+        if number >= 20:
+            output += _tens[number // 10]
+            number %= 10
+            if number % 10 in _ones:
+                output += '-'
+
+        if number in _ones:
+            output += _ones[number]
+
+        return output
+
+def cleanse_string(string):
+    string = string.replace(' ', '')
+    string = string.replace('-', '')
+    return string
+
+print(sum(len(cleanse_string(to_english(i))) for i in range(1, 1001)))
+
+#Output: 21124
 # In[ ]:
 
 
 #Question 2:
-class Solution:
-    def maxscore(self,cardpoints:list[int],k: int):
-        sum_left,sum_right = sum(cardpoints[:k],0)
-        res = sum_left
-        for i in range(k):
-            sum_left -= cardpoints[k-1-i]
-            sum_right += cardpoints[len(cardpoints)-1]
-            res = max(res,sum_left + sum_right)
-        return res
+from typing import List
+
+def maxScore(cardPoints: List[int], k: int) -> int:
+    ans = s = sum(cardPoints[-k:])
+    for i, x in enumerate(cardPoints[:k]):
+        s += x - cardPoints[-k + i]
+        ans = max(ans, s)
+    return ans
 
 
-# In[ ]:
+cardPoints = list(map(int, input("Enter card points separated by spaces: ").split()))
+k = int(input("Enter the value of k: "))
 
+result = maxScore(cardPoints, k)
 
-if __name__=="__main__":
-    solution = Solution()
-    cardpoints = []
-    while True:
-        try:
-            value = int(input())
-            cardpoints.append(value)
-        except ValueError:
-            break
-    k= int(input())
-    result = solution.maxscore(cardpoints, k)
-    print(result)
+print("Maximum score:", result)
 
+#output -
+# Enter card points separated by spaces: 2 2 2
+# Enter the value of k: 2
+# Maximum score: 4
 
 # In[ ]:
 
